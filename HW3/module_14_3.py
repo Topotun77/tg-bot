@@ -46,7 +46,6 @@ PRODUCTS = [
 bot = Bot(token=API)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
-
 kb = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -58,13 +57,12 @@ kb = ReplyKeyboardMarkup(
     ]
 )
 
+# Инлайн клавиатура для товаров формируется с использованием списковых сборок из базы PRODUCTS
 inline_buy = InlineKeyboardMarkup(
-    row_width=6,
     inline_keyboard=[
-        [
-        InlineKeyboardButton(text=PRODUCTS[i+j*3][0], callback_data='product_buying')
-        for i in range(3) if (i + j * 3) < len(PRODUCTS)
-        ] for j in range((len(PRODUCTS)-1) // 3 + 1)
+        [InlineKeyboardButton(text=PRODUCTS[i + j * 3][0], callback_data='product_buying') for i in range(3)
+         if (i + j * 3) < len(PRODUCTS)
+         ] for j in range((len(PRODUCTS) - 1) // 3 + 1)
     ]
 )
 
@@ -98,6 +96,7 @@ class UserState(StatesGroup):
     age = State()
     growth = State()
     weight = State()
+
 
 class UserData():
     DATA = defaultdict(dict, {})
@@ -200,8 +199,8 @@ async def send_calories(message: types.Message, state):
                f'35 - 40 — Ожирение 2 степени\n\n'
                f'40 и более — Ожирение 3 степени')
         if imb > 25:
-            txt += ('\n\n\tВозможно, вас заинтересуют наши товары. Нажмите, пожалуйста, кнопку "Купить" в основном меню".'
-                    ' С пожеланием приятных покупок, команда Магазина здоровья!')
+            txt += ('\n\n\tВозможно, вас заинтересуют наши товары. Нажмите, пожалуйста, кнопку '
+                    '"Купить" в основном меню. С пожеланием приятных покупок, команда Магазина здоровья!')
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
     await state.finish()
