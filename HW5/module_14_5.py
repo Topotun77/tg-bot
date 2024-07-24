@@ -262,7 +262,7 @@ async def info(message: types.Message):
 @dp.message_handler(text='Регистрация')
 async def sing_up(message: types.Message):
     txt = ('Введите имя пользователя (только латинский алфавит, для прерывания ввода наберите '
-           '"stop" в любой момент):')
+           '/stop в любой момент):')
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
     await RegistrationState.username.set()
@@ -270,7 +270,7 @@ async def sing_up(message: types.Message):
 
 @dp.message_handler(state=RegistrationState.username)
 async def set_username(message: types.Message, state):
-    if message.text == 'stop':
+    if message.text == '/stop':
         txt = 'Добавление пользователя прервано.'
         message.answer = decor_log(message.answer, message, txt)
         await message.answer(txt, reply_markup=kb)
@@ -290,7 +290,7 @@ async def set_username(message: types.Message, state):
 
 @dp.message_handler(state=RegistrationState.email)
 async def set_email(message: types.Message, state):
-    if message.text == 'stop':
+    if message.text == '/stop':
         txt = 'Добавление пользователя прервано.'
         message.answer = decor_log(message.answer, message, txt)
         await message.answer(txt, reply_markup=kb)
@@ -305,7 +305,7 @@ async def set_email(message: types.Message, state):
 
 @dp.message_handler(state=RegistrationState.age)
 async def set_age(message: types.Message, state):
-    if message.text == 'stop':
+    if message.text == '/stop':
         txt = 'Добавление пользователя прервано.'
         message.answer = decor_log(message.answer, message, txt)
         await message.answer(txt, reply_markup=kb)
@@ -320,7 +320,7 @@ async def set_age(message: types.Message, state):
             await message.answer(txt, reply_markup=kb)
             await state.finish()
         except DataError as err:
-            txt = err.args[0] + 'Введите другое имя или наберите "stop":'
+            txt = err.args[0] + 'Введите другое имя или наберите /stop:'
             message.answer = decor_log(message.answer, message, txt)
             await message.answer(txt)
             await RegistrationState.username.set()
