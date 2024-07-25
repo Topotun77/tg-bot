@@ -136,11 +136,11 @@ async def main_menu(message: types.Message):
 
 @dp.callback_query_handler(text='formulas')
 async def get_formulas(call: types.CallbackQuery):
-    txt = ('Упрощенный вариант формулы Миффлина-Сан Жеора:\n\n'
-           '<i><b>для мужчин:</i> 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5</b>\n'
-           '<i><b>для женщин:</i> 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161</b>\n\n'
+    txt = ('🧮 Упрощенный вариант формулы Миффлина-Сан Жеора:\n\n'
+           '<b><i>для мужчин:</i>\n🙎‍♂️‍ 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5</b>\n\n'
+           '<b><i>для женщин:</i>\n🙍‍♀️ 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161</b>\n\n'
            'Формула расчета индекса массы тела (ИМТ):\n\n'
-           '<b>ИМТ = вес (кг) / рост (м) ^ 2</b>')
+           '<b>✅ ИМТ = вес (кг) / рост (м) ^ 2</b>')
     call.answer = decor_log(call.answer, call, txt)
     await call.message.answer(txt, parse_mode='HTML')
     await call.answer()
@@ -226,7 +226,7 @@ async def send_calories(message: types.Message, state):
 @dp.message_handler(text='Купить')
 async def get_buying_list(message: types.Message):
     for product in products:
-        txt = f'🚀 <i>{product[1]}</i> | Описание: <b>{product[2]}</b> | Цена: {product[3]} руб.'
+        txt = f'🚀 <i>{product[1]}</i> \nОписание: <b>{product[2]}</b> \nЦена: {product[3]} ₽'
         try:
             with open(product[4], mode='rb') as img:
                 message_answer_log = decor_log(message.answer_photo, message, txt)
