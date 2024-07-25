@@ -120,7 +120,7 @@ class UserData():
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
-    txt = ('Привет! Я бот помогающий твоему здоровью. Хотите узнать сколько калорий '
+    txt = ('🌿 Привет! Я бот помогающий твоему здоровью. Хотите узнать сколько калорий '
            'Вам нужно потреблять в день для здорового питания? Нажмите на кнопку "Рассчитать".')
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt, reply_markup=kb)
@@ -137,12 +137,12 @@ async def main_menu(message: types.Message):
 @dp.callback_query_handler(text='formulas')
 async def get_formulas(call: types.CallbackQuery):
     txt = ('Упрощенный вариант формулы Миффлина-Сан Жеора:\n\n'
-           'для мужчин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5\n'
-           'для женщин: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161\n\n'
+           '<i><b>для мужчин:</i> 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5</b>\n'
+           '<i><b>для женщин:</i> 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161</b>\n\n'
            'Формула расчета индекса массы тела (ИМТ):\n\n'
-           'ИМТ = вес (кг) / рост (м) ^ 2')
+           '<b>ИМТ = вес (кг) / рост (м) ^ 2</b>')
     call.answer = decor_log(call.answer, call, txt)
-    await call.message.answer(txt)
+    await call.message.answer(txt, parse_mode='HTML')
     await call.answer()
 
 
@@ -150,7 +150,7 @@ async def get_formulas(call: types.CallbackQuery):
 async def set_gender(call: types.CallbackQuery):
     if call.from_user.first_name not in UserData.DATA:
         UserData.DATA[call.from_user.first_name] = {}
-    txt = 'Введите свой пол (М/Ж):'
+    txt = '✍️ Введите свой пол (М/Ж):'
     call.answer = decor_log(call.answer, call, txt)
     await call.message.answer(txt)
     await UserState.gender.set()
@@ -160,7 +160,7 @@ async def set_gender(call: types.CallbackQuery):
 @dp.message_handler(state=UserState.gender)
 async def set_age(message: types.Message, state):
     await state.update_data(gender=message.text)
-    txt = 'Введите свой возраст:'
+    txt = '✍️ Введите свой возраст:'
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
     await UserState.age.set()
@@ -169,7 +169,7 @@ async def set_age(message: types.Message, state):
 @dp.message_handler(state=UserState.age)
 async def set_growth(message: types.Message, state):
     await state.update_data(age=message.text.replace(',', '.'))
-    txt = 'Введите свой рост:'
+    txt = '✍️ Введите свой рост:'
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
     await UserState.growth.set()
@@ -178,7 +178,7 @@ async def set_growth(message: types.Message, state):
 @dp.message_handler(state=UserState.growth)
 async def set_weight(message: types.Message, state):
     await state.update_data(growth=message.text.replace(',', '.'))
-    txt = 'Введите свой вес:'
+    txt = '✍️ Введите свой вес:'
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
     await UserState.weight.set()
@@ -204,33 +204,33 @@ async def send_calories(message: types.Message, state):
     except ValueError or ZeroDivisionError:
         txt = 'Вы ввели ошибочные данные'
     else:
-        txt = (f'Ваша норма калорий по формуле Миффлина-Сан Жеора: {calories} калорий\n\n'
-               f'Индекс массы тела (ИМТ): {imb} кг/кв.м\n\n'
+        txt = (f'<b>Ваша норма калорий по формуле Миффлина-Сан Жеора: <u>{calories}</u> Ккал</b>\n\n'
+               f'<b>Индекс массы тела (ИМТ): <u>{imb}</u> кг/кв.м</b>\n\n'
                f'В соответствии с рекомендациями ВОЗ разработана следующая интерпретация показателей ИМТ:\n\n'
-               f'16 и менее — Выраженный дефицит массы тела\n\n'
-               f'16 - 18,5 — Недостаточная (дефицит) масса тела\n\n'
-               f'18,5 - 25 — Норма\n\n'
-               f'25 - 30 — Избыточная масса тела (предожирение)\n\n'
-               f'30 - 35 — Ожирение 1 степени\n\n'
-               f'35 - 40 — Ожирение 2 степени\n\n'
-               f'40 и более — Ожирение 3 степени')
+               f'💙<b>16 и менее</b> — Выраженный дефицит массы тела\n\n'
+               f'🩵 <b>16 - 18,5</b> — Недостаточная (дефицит) масса тела\n\n'
+               f'💚 <b>18,5 - 25</b> — Норма\n\n'
+               f'💛 <b>25 - 30</b> — Избыточная масса тела (предожирение)\n\n'
+               f'🧡 <b>30 - 35</b> — Ожирение 1 степени\n\n'
+               f'❤️ <b>35 - 40</b> — Ожирение 2 степени\n\n'
+               f'🩷 <b>40 и более</b> — Ожирение 3 степени')
         if imb > 25:
-            txt += ('\n\n\tВозможно, вас заинтересуют наши товары. Нажмите, пожалуйста, кнопку '
-                    '"Купить" в основном меню. С пожеланием приятных покупок, команда Магазина здоровья!')
+            txt += ('\n\n\t<b>‼️‼️‼️ Возможно, вас заинтересуют наши товары. Нажмите, пожалуйста, кнопку '
+                    '"Купить" в основном меню. С пожеланием приятных покупок, команда Магазина здоровья!</b>')
         set_user_info(message.from_user.first_name, data['gender'], data['age'], data['growth'], data['weight'])
     message.answer = decor_log(message.answer, message, txt)
-    await message.answer(txt, reply_markup=kb)
+    await message.answer(txt, reply_markup=kb, parse_mode='HTML')
     await state.finish()
 
 
 @dp.message_handler(text='Купить')
 async def get_buying_list(message: types.Message):
     for product in products:
-        txt = f'{product[1]} | Описание: {product[2]} | Цена: {product[3]} руб.'
+        txt = f'🚀 <i>{product[1]}</i> | Описание: <b>{product[2]}</b> | Цена: {product[3]} руб.'
         try:
             with open(product[4], mode='rb') as img:
                 message_answer_log = decor_log(message.answer_photo, message, txt)
-                await message_answer_log(img, txt)
+                await message_answer_log(img, txt, parse_mode='HTML')
         except Exception as err:
             print(err, err.args)
             message_answer_log = decor_log(message.answer, message, txt)
@@ -242,9 +242,9 @@ async def get_buying_list(message: types.Message):
 
 @dp.callback_query_handler(text='product_buying')
 async def send_confirm_message(call: types.CallbackQuery):
-    txt = 'Вы успешно приобрели продукт!'
+    txt = '<b>Вы успешно приобрели продукт!</b>'
     call.answer = decor_log(call.answer, call, txt)
-    await call.message.answer(txt)
+    await call.message.answer(txt, parse_mode='HTML')
     await call.answer()
     if 'buy' not in UserData.DATA[call.from_user.first_name]:
         UserData.DATA[call.from_user.first_name]['buy'] = {}
@@ -254,30 +254,30 @@ async def send_confirm_message(call: types.CallbackQuery):
 
 @dp.message_handler(text='Информация')
 async def info(message: types.Message):
-    txt = 'Я - невероятно крутой бот, который знает секрет как похудеть!'
+    txt = '🌿 Я - невероятно крутой бот, который знает секрет как похудеть!'
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
 
 
 @dp.message_handler(text='Регистрация')
 async def sing_up(message: types.Message):
-    txt = ('Введите имя пользователя (только латинский алфавит, для прерывания ввода наберите '
-           '/stop в любой момент):')
+    txt = ('✍️ Введите имя пользователя (только латинский алфавит, <b>для прерывания ввода наберите '
+           '/cancel в любой момент</b>):')
     message.answer = decor_log(message.answer, message, txt)
-    await message.answer(txt)
+    await message.answer(txt, parse_mode='HTML')
     await RegistrationState.username.set()
 
 
 @dp.message_handler(state=RegistrationState.username)
 async def set_username(message: types.Message, state):
-    if message.text == '/stop':
-        txt = 'Добавление пользователя прервано.'
+    if message.text == '/cancel':
+        txt = '<b>Добавление пользователя прервано.</b>'
         message.answer = decor_log(message.answer, message, txt)
-        await message.answer(txt, reply_markup=kb)
+        await message.answer(txt, reply_markup=kb, parse_mode='HTML')
         await state.finish()
     elif not is_included(message.text):
         await state.update_data(username=message.text)
-        txt = 'Введите свой email:'
+        txt = '✍️ Введите свой email:'
         message.answer = decor_log(message.answer, message, txt)
         await message.answer(txt)
         await RegistrationState.email.set()
@@ -290,14 +290,14 @@ async def set_username(message: types.Message, state):
 
 @dp.message_handler(state=RegistrationState.email)
 async def set_email(message: types.Message, state):
-    if message.text == '/stop':
-        txt = 'Добавление пользователя прервано.'
+    if message.text == '/cancel':
+        txt = '<b>Добавление пользователя прервано.</b>'
         message.answer = decor_log(message.answer, message, txt)
-        await message.answer(txt, reply_markup=kb)
+        await message.answer(txt, reply_markup=kb, parse_mode='HTML')
         await state.finish()
     else:
         await state.update_data(email=message.text)
-        txt = 'Введите свой возраст:'
+        txt = '✍️ Введите свой возраст:'
         message.answer = decor_log(message.answer, message, txt)
         await message.answer(txt)
         await RegistrationState.age.set()
@@ -305,22 +305,22 @@ async def set_email(message: types.Message, state):
 
 @dp.message_handler(state=RegistrationState.age)
 async def set_age(message: types.Message, state):
-    if message.text == '/stop':
-        txt = 'Добавление пользователя прервано.'
+    if message.text == '/cancel':
+        txt = '<b>Добавление пользователя прервано.</b>'
         message.answer = decor_log(message.answer, message, txt)
-        await message.answer(txt, reply_markup=kb)
+        await message.answer(txt, reply_markup=kb, parse_mode='HTML')
         await state.finish()
     else:
         await state.update_data(age=message.text)
         data = await state.get_data()
         try:
             add_user(data['username'], data['email'], data['age'])
-            txt = 'Пользователь успешно добавлен.'
+            txt = '🎉 Пользователь успешно добавлен.'
             message.answer = decor_log(message.answer, message, txt)
             await message.answer(txt, reply_markup=kb)
             await state.finish()
         except DataError as err:
-            txt = err.args[0] + 'Введите другое имя или наберите /stop:'
+            txt = err.args[0] + '✍️ Введите другое имя или наберите /stop:'
             message.answer = decor_log(message.answer, message, txt)
             await message.answer(txt)
             await RegistrationState.username.set()
