@@ -30,6 +30,7 @@ import time
 from collections import defaultdict
 from pprint import pprint
 from crud_functions import *
+from kandinsky import *
 
 API = 'XXX'
 products = get_all_products()
@@ -326,8 +327,43 @@ async def set_age(message: types.Message, state):
             await RegistrationState.username.set()
 
 
+@dp.message_handler(content_types=types.ContentTypes.PHOTO)
+async def save_photo(message: types.Message, state):
+    print('Получено фото')
+    await message.photo[-1].download(destination_file='image/photo.jpg')
+    txt = '🌈 Вы отправили вот это фото'
+    try:
+        with open('image/photo.jpg', mode='rb') as img:
+            message_answer_log = decor_log(message.answer_photo, message, txt)
+            await message_answer_log(img, txt, parse_mode='HTML')
+    except Exception as err:
+        print(err, err.args)
+        message_answer_log = decor_log(message.answer, message, txt)
+        await message_answer_log(txt)
+
+
 @dp.message_handler()
 async def all_massages(message: types.Message):
+    # dir_ = f'./image/' + message.text.replace("\n", "_").split(".")[0]
+    dir_ = f'./image/kandinski'
+    try:
+        os.mkdir(os.getcwd().replace("\\", "/") + dir_)
+    except FileExistsError:
+        print('exist')
+
+    try:
+        file_name = await gen(message.text.replace("\n", " "), dir_)
+        print(f'сделано {file_name}')
+        txt = f'По вашему запросу: \n<pre><b>{message.text}</b></pre>\nсгенерирована вот такая картинка'
+        with open(file_name, mode='rb') as img:
+            message_answer_log = decor_log(message.answer_photo, message, txt)
+            await message_answer_log(img, txt, parse_mode='HTML')
+    except Exception as err:
+        raise
+        # print(err, err.args)
+        # message_answer_log = decor_log(message.answer, message, str(err.args))
+        # await message_answer_log(str(err.args))
+
     txt = 'Введите команду /start, чтобы начать общение.'
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt)
