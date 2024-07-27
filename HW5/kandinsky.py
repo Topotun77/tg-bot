@@ -56,7 +56,7 @@ class Text2ImageAPI:
 
 
 async def gen(prom, dirr="image"):
-    api = Text2ImageAPI('https://api-key.fusionbrain.ai/', 'E0A5F08539E87D1AFE9E5F977178F397', 'A3C120779CF1D828CAE6BFD2E2B7AF20')
+    api = Text2ImageAPI('https://api-key.fusionbrain.ai/', 'XXX', 'XXX')
     model_id = api.get_model()
     uuid = api.generate(prom, model_id)
     images = await api.check_generation(uuid)
@@ -67,7 +67,7 @@ async def gen(prom, dirr="image"):
     # Декодируем строку base64 в бинарные данные
     image_data = base64.b64decode(image_base64)
     file_name = f"{prom.split('.')[0]}_{time.time_ns()}.jpg"
-    for i in '?!*$':
+    for i in '?!*$№#:;':
         file_name = file_name.replace(i, '')
     print(f"{dirr}/{file_name}")
 
