@@ -33,17 +33,6 @@ from crud_functions import *
 from kandinsky import *
 
 API = 'XXX'
-products = get_all_products()
-
-# PRODUCTS = [
-#     ['Лот #001', 'Очень бюджетный вариант', 199, 'image/006.JPG'],
-#     ['Лот #002', 'Разновидность бюджетного варианта', 299, 'image/003.JPG'],
-#     ['Лот #003', 'Инструкция для самостоятельной реализации на базе экранов Nextion', 2_999, 'image/009.JPG'],
-#     ['Лот #004', 'Высокоинтеллектуальное решение на базе ИИ', 29_999, 'image/007.JPG'],
-#     ['Лот #005', 'Высокоинтеллектуальное решение на базе ИИ с дактилоскопическим анализом состояния здоровья',
-#      69_999, 'image/008.JPG'],
-#     ['Лот #006', 'Самое эффективное решение по невероятно низкой цене', 9, 'image/010.JPG']
-# ]
 
 bot = Bot(token=API)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -59,15 +48,6 @@ kb = ReplyKeyboardMarkup(
             KeyboardButton(text='Регистрация'),
             KeyboardButton(text='Купить')
         ]
-    ]
-)
-
-# Инлайн клавиатура для товаров формируется с использованием списковых сборок из базы products
-inline_buy = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text=products[i + j * 3][1], callback_data='product_buying') for i in range(3)
-         if (i + j * 3) < len(products)
-         ] for j in range((len(products) - 1) // 3 + 1)
     ]
 )
 
@@ -122,9 +102,17 @@ class UserData():
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     txt = ('🌿 Привет! Я бот помогающий твоему здоровью. Хотите узнать сколько калорий '
-           'Вам нужно потреблять в день для здорового питания? Нажмите на кнопку "Рассчитать".')
+           'Вам нужно потреблять в день для здорового питания? Нажмите на кнопку "Рассчитать".'
+           '\n\nА еще, <b>в качестве развлечения</b>, Вы можете отправить запрос <b>Кандинскому 3.0</b> '
+           'просто набрав его текст здесь и сейчас. '
+           'Ответ возможно придется подождать около минуты 😎\n\n'
+           'Например, можно отправить мне такой текст: <pre>бот помогающий твоему здоровью</pre>'
+           'И я покажу Вам свой портрет.\n\n'
+           f'Или, например, вот такой:<pre>За окном лето, прекрасная погода, а я - программист '
+           f'{message.from_user.first_name} - сижу и проверяю домашние задания студентов</pre>'
+           )
     message.answer = decor_log(message.answer, message, txt)
-    await message.answer(txt, reply_markup=kb)
+    await message.answer(txt, reply_markup=kb, parse_mode='HTML')
 
 
 @dp.message_handler(text='Рассчитать')
@@ -226,6 +214,15 @@ async def send_calories(message: types.Message, state):
 
 @dp.message_handler(text='Купить')
 async def get_buying_list(message: types.Message):
+    products = get_all_products()
+    # Инлайн клавиатура для товаров формируется с использованием списковых сборок из базы products
+    inline_buy = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=products[i + j * 3][1], callback_data='product_buying') for i in range(3)
+             if (i + j * 3) < len(products)
+             ] for j in range((len(products) - 1) // 3 + 1)
+        ]
+    )
     for product in products:
         txt = f'🚀 <i>{product[1]}</i> \nОписание: <b>{product[2]}</b> \nЦена: {product[3]} ₽'
         try:
@@ -331,7 +328,7 @@ async def set_age(message: types.Message, state):
 async def save_photo(message: types.Message, state):
     print('Получено фото')
     await message.photo[-1].download(destination_file='image/photo.jpg')
-    txt = '🌈 Вы отправили вот это фото'
+    txt = '🌈 Вы отправили вот это фото. Зачем оно мне? 🤔'
     try:
         with open('image/photo.jpg', mode='rb') as img:
             message_answer_log = decor_log(message.answer_photo, message, txt)
@@ -354,7 +351,7 @@ async def all_massages(message: types.Message):
     try:
         file_name = await gen(message.text.replace("\n", " "), dir_)
         print(f'сделано {file_name}')
-        txt = f'По вашему запросу: \n<pre><b>{message.text}</b></pre>\nсгенерирована вот такая картинка'
+        txt = f'По вашему запросу: \n<pre><b>{message.text}</b></pre>\nсгенерирована эта картинка ☝️'
         with open(file_name, mode='rb') as img:
             message_answer_log = decor_log(message.answer_photo, message, txt)
             await message_answer_log(img, txt, parse_mode='HTML')
@@ -366,7 +363,7 @@ async def all_massages(message: types.Message):
 
     txt = 'Введите команду /start, чтобы начать общение.'
     message.answer = decor_log(message.answer, message, txt)
-    await message.answer(txt)
+    await message.answer(txt, parse_mode='HTML')
 
 
 if __name__ == '__main__':
