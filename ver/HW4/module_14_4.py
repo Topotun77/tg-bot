@@ -75,7 +75,7 @@ inline_butt2 = InlineKeyboardButton(text='Формулы расчёта', callba
 inline_kb.row(inline_butt1, inline_butt2)
 
 logging.basicConfig(
-    filename='tg-bot.log', filemode='w', encoding='utf-8',
+    filename='tg-bot.log', filemode='a', encoding='utf-8',
     format='%(asctime)s | %(levelname)s | %(name)s | %(message)s',
     level=logging.INFO)
 
@@ -93,7 +93,7 @@ def decor_log(func, message, txt):
             logging.info(f'Получено сообщение от {message.from_user.first_name}: {message["text"]}')
         except KeyError:
             logging.info(f'Получено сообщение от {message.from_user.first_name}: Нажата кнопка - {message["data"]}')
-        # logging.info(f'Вся информация: {message}')
+        logging.info(f'Вся информация: {message}')
         rez = await func(*args, **kwargs)
         logging.info(f'Отправлен ответ: {txt}')
         return rez

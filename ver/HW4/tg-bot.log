@@ -131,3 +131,5 @@
 2024-07-24 21:58:11,222 | INFO | aiogram | Bot: Милый Ботик [@test_20240531_bot]
 2024-07-24 21:58:11,334 | WARNING | aiogram | Updates were skipped successfully.
 2024-07-24 21:58:11,334 | INFO | aiogram.dispatcher.dispatcher | Start polling.
+2024-07-24 23:44:08,417 | INFO | aiogram.dispatcher.dispatcher | Stop polling...
+2024-07-24 23:44:08,418 | WARNING | aiogram | Goodbye!

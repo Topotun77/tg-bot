@@ -22,6 +22,7 @@
 # есть в таблице Users, в противном случае False. Для получения записей используйте SQL запрос.
 
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
@@ -119,7 +120,7 @@ async def start(message: types.Message):
 async def main_menu(message: types.Message):
     print(f'Сообщение от {message.from_user.first_name}')
     txt = 'Выберите опцию:'
-    message.answer = decor_log(message.answer, message, txt)
+    message.answer = decor_log(message.reply, message, txt)
     await message.answer(txt, reply_markup=inline_kb)
 
 
@@ -156,7 +157,7 @@ async def set_age(message: types.Message, state):
 
 
 @dp.message_handler(state=UserState.age)
-async def set_growth(message: types.Message, state):
+async def set_growth(message: types.Message, state: FSMContext):
     await state.update_data(age=message.text.replace(',', '.'))
     txt = '✍️ Введите свой рост:'
     message.answer = decor_log(message.answer, message, txt)
@@ -165,7 +166,7 @@ async def set_growth(message: types.Message, state):
 
 
 @dp.message_handler(state=UserState.growth)
-async def set_weight(message: types.Message, state):
+async def set_weight(message: types.Message, state: FSMContext):
     await state.update_data(growth=message.text.replace(',', '.'))
     txt = '✍️ Введите свой вес:'
     message.answer = decor_log(message.answer, message, txt)
@@ -174,7 +175,7 @@ async def set_weight(message: types.Message, state):
 
 
 @dp.message_handler(state=UserState.weight)
-async def send_calories(message: types.Message, state):
+async def send_calories(message: types.Message, state: FSMContext):
     await state.update_data(weight=message.text.replace(',', '.'))
     UserData.DATA[message.from_user.first_name] |= await state.get_data()
     # locals().update(UserData.DATA[message["from"]["first_name"]])
@@ -253,7 +254,7 @@ async def send_confirm_message(call: types.CallbackQuery):
 @dp.message_handler(text='Информация')
 async def info(message: types.Message):
     txt = '🌿 Я - невероятно крутой бот, который знает секрет как похудеть!'
-    message.answer = decor_log(message.answer, message, txt)
+    message.answer = decor_log(message.reply, message, txt)
     await message.answer(txt)
 
 
@@ -281,7 +282,7 @@ async def set_username(message: types.Message, state):
         await RegistrationState.email.set()
     else:
         txt = 'Такой пользователь существует, введите другое имя:'
-        message.answer = decor_log(message.answer, message, txt)
+        message.answer = decor_log(message.reply, message, txt)
         await message.answer(txt)
         await RegistrationState.username.set()
 
@@ -318,7 +319,7 @@ async def set_age(message: types.Message, state):
             await message.answer(txt, reply_markup=kb)
             await state.finish()
         except DataError as err:
-            txt = err.args[0] + '✍️ Введите другое имя или наберите /stop:'
+            txt = err.args[0] + '✍️ Введите другое имя или наберите /cancel:'
             message.answer = decor_log(message.answer, message, txt)
             await message.answer(txt)
             await RegistrationState.username.set()
@@ -342,7 +343,7 @@ async def save_photo(message: types.Message, state):
 @dp.message_handler()
 async def all_massages(message: types.Message):
     # dir_ = f'./image/' + message.text.replace("\n", "_").split(".")[0]
-    dir_ = f'./image/kandinski'
+    dir_ = f'image/kandinski'
     try:
         os.mkdir(os.getcwd().replace("\\", "/") + dir_)
     except FileExistsError:
@@ -351,7 +352,7 @@ async def all_massages(message: types.Message):
     try:
         file_name = await gen(message.text.replace("\n", " "), dir_)
         print(f'сделано {file_name}')
-        txt = f'По вашему запросу: \n<pre><b>{message.text}</b></pre>\nсгенерирована эта картинка ☝️'
+        txt = f'☝️ Эта картинка сгенерирована по вашему запросу: \n<pre><b>{message.text}</b></pre>'
         with open(file_name, mode='rb') as img:
             message_answer_log = decor_log(message.answer_photo, message, txt)
             await message_answer_log(img, txt, parse_mode='HTML')

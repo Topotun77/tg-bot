@@ -78,6 +78,13 @@ logging.basicConfig(
 
 
 def decor_log(func, message, txt):
+    """
+    Декоратор для ведений логирования при отправке сообщений пользователю
+    :param func: Функция, которую будем логировать
+    :param message: Сообщение от пользователя, тип: types.Message или types.CallbackQuery
+    :param txt: Текст для логирования
+    :return: полученную обернутую функцию
+    """
     async def log_writer(*args, **kwargs):
         try:
             logging.info(f'Получено сообщение от {message.from_user.first_name}: {message["text"]}')
@@ -202,7 +209,7 @@ async def send_calories(message: types.Message, state):
             txt += ('\n\n\tВозможно, вас заинтересуют наши товары. Нажмите, пожалуйста, кнопку '
                     '"Купить" в основном меню. С пожеланием приятных покупок, команда Магазина здоровья!')
     message.answer = decor_log(message.answer, message, txt)
-    await message.answer(txt)
+    await message.answer(txt, reply_markup=kb)
     await state.finish()
 
 
