@@ -108,9 +108,7 @@ async def start(message: types.Message):
            'просто набрав его текст здесь и сейчас. '
            'Ответ возможно придется подождать около минуты 😎\n\n'
            'Например, можно отправить мне такой текст: <pre>бот помогающий твоему здоровью</pre>'
-           'И я покажу Вам свой портрет.\n\n'
-           f'Или, например, вот такой:<pre>За окном лето, прекрасная погода, а я - программист '
-           f'{message.from_user.first_name} - сижу и проверяю домашние задания студентов</pre>'
+           'И я покажу Вам свой портрет.'
            )
     message.answer = decor_log(message.answer, message, txt)
     await message.answer(txt, reply_markup=kb, parse_mode='HTML')
@@ -345,7 +343,7 @@ async def all_massages(message: types.Message):
     # dir_ = f'./image/' + message.text.replace("\n", "_").split(".")[0]
     dir_ = f'image/kandinski'
     try:
-        os.mkdir(os.getcwd().replace("\\", "/") + dir_)
+        os.mkdir(os.getcwd().replace("\\", "/") + '/' + dir_)
     except FileExistsError:
         print('exist')
 
