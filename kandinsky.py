@@ -56,7 +56,7 @@ class Text2ImageAPI:
 
 
 async def gen(prom, dirr="image"):
-    api = Text2ImageAPI('https://api-key.fusionbrain.ai/', 'BAA207DA6798EECBB3088043078D13AA', '01C8B90B2E7F31D50E510DEE6A65FB4B')
+    api = Text2ImageAPI('https://api-key.fusionbrain.ai/', 'XXX', 'XXX')
     # api2 =
     model_id = api.get_model()
     uuid = api.generate(prom, model_id)
